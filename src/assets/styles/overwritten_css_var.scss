@@ -31,6 +31,7 @@
 
 // picker
 .nut-popup {
+  -webkit-user-select: none;
   user-select: none;
   .nut-picker-roller {
     @media screen and (min-width: 560px) {
@@ -139,4 +140,21 @@ textarea:-ms-input-placeholder {
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
   color: var(--comment-text-color) !important;
+}
+
+.Toastify__close-button {
+  position: relative;
+  left: -8px;
+  bottom: -8px;
+}
+
+.Toastify__toast-container, .Toastify__toast-container--top-center  {
+  --toastify-toast-min-height: 48px;
+}
+
+.nut-radio, .nut-radio--round, .nut-checkbox, .nut-checkbox--round  {
+  cursor: pointer;
+}
+.fa-circle-question, .fa-location-arrow {
+  cursor: pointer;
 }

@@ -1,5 +1,6 @@
 interface GlobalStoreState {
   isLoading: boolean;
+  isDefaultIcon: boolean;
   isFlowFetching: boolean;
   fetchResult: boolean;
   bottomSafeArea: number;
@@ -10,8 +11,12 @@ interface GlobalStoreState {
   isIconColor: boolean;
   isEditorCommon: boolean;
   isSimpleReicon: boolean;
+  showFloatingRefreshButton: boolean;
   istabBar: boolean;
+  istabBar2: boolean;
   ishostApi: string;
+  savedPositions: any;
+  subProgressStyle: any;
 }
 
 interface ENV {
@@ -19,6 +24,7 @@ interface ENV {
   latestVersion?: string;
   version?: string;
   backend?:
+    | 'sing-box'
     | 'Stash'
     | 'QX'
     | 'Loon'

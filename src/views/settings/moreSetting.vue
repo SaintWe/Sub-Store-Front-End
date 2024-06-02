@@ -27,6 +27,16 @@
         </template>
       </nut-cell>
 
+      <nut-cell :title="$t(`moreSettingPage.isDefaultIcon`)" class="cell-item">
+        <template v-slot:link>
+          <nut-switch
+            class="my-switch"
+            v-model="awIsDefaultIcon"
+            size="mini"
+            @change="setIsDefaultIcon"
+          />
+        </template>
+      </nut-cell>
       <nut-cell :title="$t(`moreSettingPage.isIC`)" class="cell-item">
         <template v-slot:link>
           <nut-switch
@@ -59,7 +69,27 @@
           />
         </template>
       </nut-cell>
+      <nut-cell :title="$t(`moreSettingPage.showFloatingRefreshButton`)" class="cell-item">
+        <template v-slot:link>
+          <nut-switch
+            class="my-switch"
+            v-model="awShowFloatingRefreshButton"
+            size="mini"
+            @change="setShowFloatingRefreshButton"
+          />
+        </template>
+      </nut-cell>
 
+      <nut-cell :title="$t(`moreSettingPage.tabBar2`)" class="cell-item">
+        <template v-slot:link>
+          <nut-switch
+            class="my-switch"
+            v-model="awtabBar2"
+            size="mini"
+            @change="settabBar2"
+          />
+        </template>
+      </nut-cell>
       <nut-cell :title="$t(`moreSettingPage.tabBar`)" class="cell-item">
         <template v-slot:link>
           <nut-switch
@@ -70,6 +100,25 @@
           />
         </template>
       </nut-cell>
+      <nut-cell
+          class="cell-item"
+          :title="$t(`moreSettingPage.subProgress.title`)"
+          :desc="$t(`moreSettingPage.subProgress.${subProgressStyle}`)"
+          @click="()=>{showSubProgressPicker=true}"
+          is-link
+        >
+      </nut-cell>
+      <nut-picker
+        v-model="subProgressStyleValue"
+        v-model:visible="showSubProgressPicker"
+        :columns="[
+        { text: $t(`moreSettingPage.subProgress.hidden`), value: 'hidden' },
+        { text: $t(`moreSettingPage.subProgress.background`), value: 'background' }
+      ]"
+        :title="$t(`moreSettingPage.subProgress.title`)"
+        @confirm="subProgressStyleConfirm"
+      >
+      </nut-picker>
     </nut-cell-group>
 
     <nut-cell-group>
@@ -113,26 +162,6 @@
         is-link
       />
     </nut-cell-group>
-
-    <p class="More-title">
-      {{ $t(`moreSettingPage.other`) }}
-    </p>
-
-    <nut-cell :title="$t(`moreSettingPage.auto`)" class="cell-item">
-      <template v-slot:link>
-        <nut-switch
-          class="my-switch"
-          v-model="autoSwitchSync"
-          size="mini"
-          @change="SwitchSyncIsChange"
-        />
-      </template>
-    </nut-cell>
-
-    <p class="desc-title">
-      {{ $t(`moreSettingPage.desc`) }}
-    </p>
-
     <nut-picker
       v-model="selectedValue"
       v-model:visible="showThemePicker"
@@ -142,10 +171,27 @@
       :ok-text="$t(`themeSettingPage.themePicker.confirm`)"
       @confirm="confirm"
     />
+    <nut-cell-group>
+      <nut-cell
+          :title="$t(`moreSettingPage.clearFrontEndData.label`)"
+          class="change-themes"
+          @click.stop="clearFrontEndData"
+          is-link
+        ></nut-cell>
+      <nut-cell
+          :title="$t(`moreSettingPage.clearData.label`)"
+          class="change-themes"
+          @click.stop="clearData"
+          is-link
+        ></nut-cell>
+    </nut-cell-group>
+  
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { initStores } from "@/utils/initApp";
+  import { Dialog, Toast } from '@nutui/nutui';
   import { useSettingsStore } from '@/store/settings';
   import { storeToRefs } from 'pinia';
   import { useGlobalStore } from '@/store/global';
@@ -153,12 +199,12 @@
   import { useThemes } from '@/hooks/useThemes';
   import { computed, ref, toRaw, watchEffect } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { useAppNotifyStore } from "@/store/appNotify";
+  import { useSettingsApi } from "@/api/settings";
   // import { Dialog } from '@nutui/nutui';
 
   const { t } = useI18n();
   const settingsStore = useSettingsStore();
-  const { changeAutoDownloadGist } = settingsStore;
-  const { autoDownloadGistSync } = storeToRefs(settingsStore);
   const globalStore = useGlobalStore();
   const {
     // env,
@@ -166,27 +212,41 @@
     isLeftRight,
     ishostApi,
     isIconColor,
+    isDefaultIcon,
     isEditorCommon,
     isSimpleReicon,
+    showFloatingRefreshButton,
     istabBar,
+    istabBar2,
+    subProgressStyle,
   } = storeToRefs(globalStore);
+
+  const { showNotify } = useAppNotifyStore();
 
   const InputHostApi = ref('');
   const autoSwitchSync = ref(false);
   const SimpleSwitch = ref(false);
   const LeftRight = ref(false);
   const awIconColor = ref(false);
+  const awIsDefaultIcon = ref(false);
   const awEditorCommon = ref(false);
   const awSimpleReicon = ref(true);
+  const awShowFloatingRefreshButton = ref(false);
   const awtabBar = ref(true);
+  const awtabBar2 = ref(true);
   // const isEditing = ref(false);
   const isInit = ref(false);
+  const subProgressStyleValue = ref(['hidden']);
 
   const pickerType = ref('');
   const autoSwitch = ref(false);
   const showThemePicker = ref(false);
   // const isEditLoading = ref(false);
+  const showSubProgressPicker = ref(false);
 
+  const subProgressStyleConfirm = ({ selectedValue }) => {
+    globalStore.setSubProgressStyle(selectedValue[0]);
+  };
   const setSimpleMode = (isSimpleMode: boolean) => {
     globalStore.setSimpleMode(isSimpleMode);
   };
@@ -198,6 +258,9 @@
   const setIconColor = (isIconColor: boolean) => {
     globalStore.setIconColor(isIconColor);
   };
+  const setIsDefaultIcon = (isDefaultIcon: boolean) => {
+    globalStore.setIsDefaultIcon(isDefaultIcon);
+  };
 
   const setEditorCommon = (isIconColor: boolean) => {
     globalStore.setEditorCommon(isIconColor);
@@ -207,13 +270,19 @@
     globalStore.setSimpleReicon(isSimpleReicon);
   };
 
+  const setShowFloatingRefreshButton = (showFloatingRefreshButton: boolean) => {
+    globalStore.setShowFloatingRefreshButton(showFloatingRefreshButton);
+  };
+
   const settabBar = (istabBar: boolean) => {
     globalStore.settabBar(istabBar);
   };
-
-  const SwitchSyncIsChange = (val: boolean) => {
-    changeAutoDownloadGist({ autoDownloadGistSync: val });
+  const settabBar2 = (istabBar2: boolean) => {
+    globalStore.settabBar2(istabBar2);
   };
+
+  
+
 
   const { changeTheme } = settingsStore;
   const { theme } = storeToRefs(settingsStore);
@@ -271,6 +340,62 @@
     InputHostApi.value = ishostApi.value
       ? ishostApi.value.slice(0, 9) + '************'
       : t(`moreSettingPage.yhostapi`);
+  };
+  const clearData = () => {
+    Dialog({
+      title: t('moreSettingPage.clearData.title'),
+      content: t('moreSettingPage.clearData.content'),
+      onCancel: () => {},
+      onOk: async () => {
+        try {
+            const res = await useSettingsApi().restoreSettings({ content: JSON.stringify({}) });
+            if (res?.data?.status === "success") {
+              await initStores(false, true, true);
+              showNotify({
+                type: "success",
+                title: t(`moreSettingPage.clearData.succeed`),
+              });
+            } else {
+              throw new Error('clear data failed')
+            }
+        } catch (e) {
+          showNotify({
+            type: "danger",
+            title: t(`moreSettingPage.clearData.failed`),
+          });
+          console.error(e);
+        } 
+      },
+      popClass: 'auto-dialog',
+      cancelText: t('moreSettingPage.clearData.cancel'),
+      okText: t('moreSettingPage.clearData.conform'),
+      closeOnPopstate: true,
+      lockScroll: false,
+    });
+  };
+  const clearFrontEndData = () => {
+    Dialog({
+      title: t('moreSettingPage.clearFrontEndData.title'),
+      content: t('moreSettingPage.clearFrontEndData.content'),
+      onCancel: () => {},
+      onOk: async () => {
+        try {
+          localStorage.clear()
+          window.location.reload()
+        } catch (e) {
+          showNotify({
+            type: "danger",
+            title: t(`moreSettingPage.clearFrontEndData.failed`),
+          });
+          console.error(e);
+        } 
+      },
+      popClass: 'auto-dialog',
+      cancelText: t('moreSettingPage.clearFrontEndData.cancel'),
+      okText: t('moreSettingPage.clearFrontEndData.conform'),
+      closeOnPopstate: true,
+      lockScroll: false,
+    });
   };
 
   // const exitEditMode = () => {
@@ -332,12 +457,15 @@
   watchEffect(() => {
     SimpleSwitch.value = isSimpleMode.value;
     LeftRight.value = isLeftRight.value;
-    autoSwitchSync.value = autoDownloadGistSync.value;
     awIconColor.value = isIconColor.value;
+    awIsDefaultIcon.value = isDefaultIcon.value;
     awEditorCommon.value = isEditorCommon.value;
     awEditorCommon.value = isEditorCommon.value;
     awSimpleReicon.value = isSimpleReicon.value;
+    awShowFloatingRefreshButton.value = showFloatingRefreshButton.value;
     awtabBar.value = istabBar.value;
+    awtabBar2.value = istabBar2.value;
+    subProgressStyleValue.value = [subProgressStyle.value];
     autoSwitch.value = isAuto();
     if (!isInit.value) {
       setDisplayInfo();

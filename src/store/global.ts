@@ -9,10 +9,12 @@ const envApi = useEnvApi();
 export const useGlobalStore = defineStore('globalStore', {
   state: (): GlobalStoreState => {
     return {
+      subProgressStyle: localStorage.getItem('subProgressStyle') || 'hidden',
       isLoading: true,
       isFlowFetching: true,
       fetchResult: false,
       bottomSafeArea: 0,
+      isDefaultIcon: localStorage.getItem('isDefaultIcon') === '1',
       isDarkMode: false,
       env: {},
       isSimpleMode: localStorage.getItem('isSimpleMode') === '1',
@@ -20,12 +22,23 @@ export const useGlobalStore = defineStore('globalStore', {
       isIconColor: localStorage.getItem('iconColor') === '1',
       isEditorCommon: localStorage.getItem('iseditorCommon') !== '1',
       isSimpleReicon: localStorage.getItem('isSimpleReicon') === '1',
+      showFloatingRefreshButton: localStorage.getItem('showFloatingRefreshButton') === '1',
       istabBar: localStorage.getItem('istabBar') === '1',
+      istabBar2: localStorage.getItem('istabBar2') === '1',
       ishostApi: getHostAPIUrl(),
+      savedPositions: {},
     };
   },
   getters: {},
   actions: {
+    setSubProgressStyle(style: string) {
+      if (style && style !== 'hidden') {
+        localStorage.setItem('subProgressStyle', style);
+      } else {
+        localStorage.removeItem('subProgressStyle');
+      }
+      this.subProgressStyle = style;
+    },
     setBottomSafeArea(height: number) {
       this.bottomSafeArea = height;
     },
@@ -65,6 +78,14 @@ export const useGlobalStore = defineStore('globalStore', {
       }
       this.isIconColor = iconColor;
     },
+    setIsDefaultIcon(isDefaultIcon: boolean) {
+      if (isDefaultIcon) {
+        localStorage.setItem('isDefaultIcon', '1');
+      } else {
+        localStorage.removeItem('isDefaultIcon');
+      }
+      this.isDefaultIcon = isDefaultIcon;
+    },
     setEditorCommon(isEditorCommon: boolean) {
       if (!isEditorCommon) {
         localStorage.setItem('iseditorCommon', '1');
@@ -81,6 +102,14 @@ export const useGlobalStore = defineStore('globalStore', {
       }
       this.isSimpleReicon = isSimpleReicon;
     },
+    setShowFloatingRefreshButton(showFloatingRefreshButton: boolean) {
+      if (showFloatingRefreshButton) {
+        localStorage.setItem('showFloatingRefreshButton', '1');
+      } else {
+        localStorage.removeItem('showFloatingRefreshButton');
+      }
+      this.showFloatingRefreshButton = showFloatingRefreshButton;
+    },
     settabBar(istabBar: boolean) {
       if (istabBar) {
         localStorage.setItem('istabBar', '1');
@@ -89,6 +118,14 @@ export const useGlobalStore = defineStore('globalStore', {
       }
       this.istabBar = istabBar;
     },
+    settabBar2(istabBar2: boolean) {
+      if (istabBar2) {
+        localStorage.setItem('istabBar2', '1');
+      } else {
+        localStorage.removeItem('istabBar2');
+      }
+      this.istabBar2 = istabBar2;
+    },
     async setHostAPI(hostApi: string) {
       this.ishostApi = hostApi;
       service.defaults.baseURL = hostApi;
@@ -96,9 +133,12 @@ export const useGlobalStore = defineStore('globalStore', {
     },
     async setEnv() {
       const res = await envApi.getEnv();
-      if (res.data.status === 'success') {
+      if (res?.data?.status === 'success') {
         this.env = res.data.data;
       }
+    },
+    setSavedPositions(key: string, value: any) {
+      this.savedPositions[key] = value;
     },
   },
 });

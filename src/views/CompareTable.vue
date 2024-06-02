@@ -4,12 +4,11 @@
       <header class="compare-page-header">
         <h1>
           <font-awesome-icon icon="fa-solid fa-eye" />
-          {{ $t(`comparePage.title`) }}
-          <span
-            ><font-awesome-icon icon="fa-solid fa-angles-right" />{{
-              displayName
-            }}</span
-          >
+          <span class="title">{{ $t(`comparePage.title`) }}</span>
+          <span class="displayName">
+            <font-awesome-icon icon="fa-solid fa-angles-right" />
+            {{ displayName }}
+          </span>
         </h1>
         <button @click="clickClose">
           <font-awesome-icon icon="fa-solid fa-circle-xmark" />
@@ -19,7 +18,7 @@
         <div class="block-wrapper">
           <!--块标题-->
           <div class="sticky-title-wrapperse compare-title">
-            <p>{{ $t(`comparePage.remain.title`) }}</p>
+            <p>{{ $t(`comparePage.remain.title`) }}({{ remainDesc }}) <small v-if="originalData.length > 0" @click="goToFilterRef">{{ $t(`comparePage.filter.title`) }}({{ filterDesc }})</small></p>
           </div>
 
           <!--指示器说明-->
@@ -57,7 +56,7 @@
                       <nut-tag class="type-tag">{{ processed.type }}</nut-tag
                       >{{ processed.name }}
                     </div>
-                    <div>{{ processed.server }}</div>
+                    <div>{{ processed.server }}:{{ processed.port }}</div>
                   </div>
                 </td>
                 <td>
@@ -69,9 +68,9 @@
                   </span>
                 </td>
                 <td>
-                  <span :class="processed.tfo ? 'item-true' : 'item-false'">
+                  <span :class="(processed.tfo || processed['fast-open']) ? 'item-true' : 'item-false'">
                     <font-awesome-icon
-                      v-if="processed.tfo"
+                      v-if="(processed.tfo || processed['fast-open'])"
                       icon="fa-solid fa-check"
                     />
                   </span>
@@ -104,7 +103,7 @@
                     <div>
                       {{ original.name }}
                     </div>
-                    <div>{{ original.server }}</div>
+                    <div>{{ original.server }}:{{ original.port }}</div>
                   </div>
                 </td>
                 <td>
@@ -116,9 +115,9 @@
                   </span>
                 </td>
                 <td>
-                  <span :class="original.tfo ? 'item-true' : 'item-false'">
+                  <span :class="(original.tfo || original['fast-open']) ? 'item-true' : 'item-false'">
                     <font-awesome-icon
-                      v-if="original.tfo"
+                      v-if="(original.tfo || original['fast-open'])"
                       icon="fa-solid fa-check"
                     />
                   </span>
@@ -156,10 +155,10 @@
           >{{ $t(`comparePage.divider`) }}
         </nut-divider>
 
-        <div class="block-wrapper" v-if="originalData.length > 0">
+        <div ref="filterRef" class="block-wrapper" v-if="originalData.length > 0">
           <!--块标题-->
           <div class="sticky-title-wrapperse compare-title">
-            <p>{{ $t(`comparePage.filter.title`) }}</p>
+            <p>{{ $t(`comparePage.filter.title`) }}({{ filterDesc }})</p>
           </div>
 
           <!--表格标题-->
@@ -182,7 +181,7 @@
                       <nut-tag class="type-tag">{{ node.type }} </nut-tag
                       >{{ node.name }}
                     </div>
-                    <div>{{ node.server }}</div>
+                    <div>{{ node.server }}:{{ node.port }}</div>
                   </div>
                 </td>
                 <td>
@@ -253,6 +252,7 @@
 
   const emit = defineEmits(['closeCompare']);
 
+  const filterRef = ref(null);
   const isOriginalVisible = ref(true);
   const isProcessedVisible = ref(true);
 
@@ -303,6 +303,29 @@
     return result;
   });
 
+  const remainDesc = computed(() => {
+    const remainSize = processedData?.length || 0
+    const filterSize = originalData?.length || 0
+    const totalSize = remainSize + filterSize
+    if (!remainSize) {
+      return 0
+    }
+    return filterSize > 0 ? `${remainSize}/${totalSize}` : remainSize
+  });
+  const filterDesc = computed(() => {
+    const remainSize = processedData?.length || 0
+    const filterSize = originalData?.length || 0
+    const totalSize = remainSize + filterSize
+    if (!filterSize) {
+      return 0
+    }
+    return remainSize > 0 ? `${filterSize}/${totalSize}` : filterSize
+  });
+
+  const goToFilterRef = () => {
+    filterRef.value?.scrollIntoView()
+  }
+
   const clickClose = () => {
     emit('closeCompare');
   };
@@ -318,7 +341,7 @@
     });
     const nodeData = toRaw(val);
     const res = await useSubsApi().getSubInfo(nodeData);
-    if (res.data.status === 'success') {
+    if (res?.data?.status === 'success') {
       ipApi.value = res.data.data;
       nodeInfo.value = nodeData;
       nodeInfoIsVisible.value = true;
@@ -371,6 +394,7 @@
 
   .compare-table-row {
     padding: 0 var(--safe-area-side);
+    width: 100vw;
   }
 
   .compare-table-head {
@@ -401,7 +425,7 @@
   .compare-table-head {
     position: sticky;
     z-index: 7;
-    top: 114px;
+    top: 118px;
     border-bottom: 1px solid var(--divider-color);
     font-weight: bold;
     background: var(--background-color);
@@ -434,6 +458,7 @@
 
   .processed-item::before {
     background: var(--third-color);
+    flex-shrink: 0;
   }
 
   .block-wrapper {
@@ -446,6 +471,10 @@
       margin-top: 0;
       top: 56px;
       background: var(--background-color);
+      small {
+        cursor: pointer;
+        text-decoration: underline;
+      }
     }
 
     .compare-des {
@@ -453,7 +482,7 @@
       z-index: 8;
       display: flex;
       position: sticky;
-      top: 84px;
+      top: 88px;
       background: var(--background-color);
       color: var(--comment-text-color);
     }
@@ -478,7 +507,16 @@
     color: var(--primary-text-color);
     background: var(--background-color);
     border-color: var(--divider-color);
-
+    width: 100vw;
+    .title {
+      white-space: nowrap;
+    }
+    .displayName {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 40vw;
+    }
     h1 {
       display: flex;
       align-items: center;
@@ -505,6 +543,7 @@
     }
 
     button {
+      cursor: pointer;
       background: none;
       border: none;
       font-size: 20px;
@@ -517,7 +556,8 @@
     width: 100vw;
     height: 100vh;
     z-index: 1000;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     background: var(--background-color);
   }

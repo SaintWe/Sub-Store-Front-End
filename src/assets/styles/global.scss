@@ -75,6 +75,23 @@ img {
   font-weight: bold;
   line-height: 2;
 }
+// .nut-icon-order:before {
+//   content: "\e697";
+// }
+// .nut-icon-edit:before {
+//   content: "\e667";
+// }
+// .nut-icon-find:before {
+//   content: "\e661";
+// }
+.nut-icon-tips:before {
+  content: "\e671";
+  cursor: pointer;
+}
+.nut-icon-category:before {
+  font-size: 20px;
+  content: "\e662";
+}
 .nut-icon-issue:before {
   content: '\e6b1';
 }
@@ -97,7 +114,18 @@ img {
 }
 .nut-icon-rect-right:before {
   content: '\e6cb'; // \2003 占位符
-  color: var(--lowest-text-color); // 更多设置
+  // color: var(--lowest-text-color); // 更多设置
+}
+.nut-icon-rect-down:before {
+  content: "\e6cc";
+}
+
+.nut-icon-triangle-down:before {
+  content: "\eb6d";
+}
+
+.nut-icon-triangle-up:before {
+  content: "\eb6e";
 }
 .nut-icon-arrow-right2:before {
   content: '\e6a9';

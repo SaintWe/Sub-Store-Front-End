@@ -3,6 +3,13 @@ export default {
   specificWord: {
     singleSub: 'Single',
     collectionSub: 'Collection',
+    file: 'File',
+    unknownType: 'Unknown Type',
+    unknownSource: 'Unknown Source',
+    unknown: 'Unknown',
+    all: 'All',
+    untagged: 'Untagged',
+    or: 'or',
   },
   globalNotify: {
     refresh: {
@@ -21,9 +28,13 @@ export default {
     },
     pagesTitle: {
       sub: 'Management',
-      sync: 'Sync Subscription',
+      file: 'File',
+      sync: 'Sync',
       my: 'My Profile',
+      editScript: 'Script Edit',
       subEditor: 'Subscription Editor',
+      fileEditor: 'File Editor',
+      iconCollection: 'Icon Collection',
       themeSetting: 'Theme Setting',
       moreSetting: 'More Setting',
       apiSetting: 'Backend Setting',
@@ -31,9 +42,9 @@ export default {
       notFound: '404 Not Found',
       askWhat: {
         sync: {
-          title: 'What is Sync Subscription?',
+          title: 'What is Sync?',
           content:
-            'Upload your subscriptions to a private Gist, which can be accessed at any time on devices that do not run the Sub Store (e.g. routers, etc.).',
+            'Upload your subscriptions/files to a private Gist, which can be accessed at any time on devices that do not run the Sub Store (e.g. routers, etc.).',
         },
         subEditor: {
           title: 'Download no subscription?',
@@ -58,8 +69,43 @@ export default {
     desc: 'Back to Home Page',
     backendDesc: 'If you are seeing this, it is probably due to a routing interception issue on the front end of your browser. You can force a refresh to see it or use the link directly without affecting the use of this link.',
   },
+  filePage: {
+    deleteFile: {
+      succeedNotify: 'Successfully deleted!',
+    },
+    content: {
+      placeholder: 'The content of the file'
+    },
+    url: {
+      label: 'URL',
+      placeholder: 'URL (please separate multiple urls with a new line). Supported parameters: noCache - do not use cache. For example: http://a.com#noCache',
+      isEmpty: 'URL cannot be empty',
+      isIllegal: 'Invalid URL',
+    },
+    copyNotify: {
+      succeed: 'Successfully copied link!\nIf you use it internally, just {path}',
+      failed: 'Failed to copy file link!\n{e}',
+    },
+    emptySub: {
+      title: 'You have no File yet',
+      desc: 'After adding you can enjoy the love of YM Peng',
+      btn: 'Create File Now',
+    },
+    source: {
+      local: 'Local',
+      remote: 'Remote',
+    },
+    ignoreFailedRemoteFile: {
+      label: 'Ignore failed remote file(s)'
+    },
+  },
   // subscription management page
   subPage: {
+    import: {
+      label: 'Import',
+      succeed: 'Successfully imported!',
+      failed: 'Failed to import!\n{e}',
+    },
     addSubTitle: 'Which type you want to create?',
     previewTitle: 'Copy/Preview a subscription',
 
@@ -85,14 +131,19 @@ export default {
       local: 'Local subscription',
       loading: 'Loading...',
       flow: 'Usage / Total',
+      showRemainingFlow: 'Remaining / Total',
       expires: 'Expires',
+      remainingDays: 'Remaining Reset Days',
+      remainingDaysUnit: '',
       noRecord: 'Refresh to get usage',
+      noFlow: 'No flow',
       noFlowInfo: 'No flow info',
+      flowError: 'Failed to get usage',
       noExpiresInfo: 'No expires info',
     },
     deleteSub: {
-      title: 'Delete Subscription',
-      desc: 'Are you sure to delete subscription {displayName}? \nDeleted cannot be restored!',
+      title: 'Delete',
+      desc: 'Are you sure to delete {displayName}? \nDeleted cannot be restored!',
       succeedNotify: 'Successfully deleted!',
       btn: {
         confirm: 'Delete',
@@ -100,16 +151,28 @@ export default {
       },
     },
     copyNotify: {
-      succeed: 'Successfully copied link!\nYou can paste in Proxy Tool now!',
+      succeed: 'Successfully copied link!',
       failed: 'Failed to copy subscription link!\n{e}',
     },
     copyConfigNotify: {
-      loading: 'Copying...',
-      succeed: 'Successfully copied config!',
-      failed: 'Failed to copy config!\n{e}',
+      loading: 'Cloning...',
+      succeed: 'Successfully cloned config!',
+      failed: 'Failed to clone config!\n{e}',
+    },
+    exportConfigNotify: {
+      loading: 'Exporting...',
+      succeed: 'Successfully exported config!',
+      failed: 'Failed to exporte config!\n{e}',
     },
     panel: {
       general: 'General',
+      tips: {
+        ok: 'View Document',
+        cancel: 'Cancel',
+        desc: 'Some functions require parameters. Please check the document.',
+        title: 'Subscription Link Parameters',
+        content: '"target=SurgeMac"\n+ ShadowsocksR/External Proxy Program\n\n"includeUnsupportedProxy=true"\nIncludes protocols not supported by the official/store version',
+      }
     },
   },
   editorPage: {
@@ -160,20 +223,29 @@ export default {
         },
         displayName: {
           label: 'Display Name',
-          placeholder: 'The display name for the subscription',
+          placeholder: 'The display name',
+        },
+        tag: {
+          label: 'Tag(s)',
+          placeholder: 'The tag(s) (separated by comma) will be used for grouping.',
         },
         source: {
           label: 'Source',
           remote: 'Remote URL',
           local: 'Local',
           mergeSources: 'Merge Sources',
-          noMerge: 'No Merge',
+          noMerge: 'Disabled',
           localFirst: 'Local Fist',
           remoteFirst: 'Remote First',
         },
         url: {
           label: 'URL',
-          placeholder: 'The original subscription URL',
+          placeholder: 'Multiple lines and parameters are supported, please click the button on the left to see the usage.',
+          tips: {
+            label: 'Usage',
+            title: 'Subscription URL(s)',
+            content: 'Subscription URL (please separate multiple subscriptions with a new line). \n\nSupported parameters:\n\ncacheKey: Setting the name of the optimistic cache. Its value can be managed in the persistent store(suitable for subscriptions that often fail to fetch).\n\nvalidCheck: error will be reported when expired or there is no remaining traffic\n\nflowUserAgent: the User-Agent for fetching subscription usage info\n\nflowUrl: the URL for fetching subscription usage info(using the content of the response body)\n\nshowRemaining: show remaining traffic instead of usage\n\nnoFlow: do not query for flow\n\nhideExpire: hide expiration time\n\nnoCache: do not use cache\n\nresetDay: the day when monthly data usage resets\n\nstartDate: subscription start date\n\ncycleDays: reset cycle (in days).\n\nFor example: http://a.com?token=1#cycleDays=31&startDate=2024-06-04 \nor http://a.com?token=1#resetDay=15',
+          },
           isEmpty: 'URL cannot be empty',
           isIllegal: 'Invalid URL',
         },
@@ -182,16 +254,31 @@ export default {
         },
         content: {
           label: 'Content',
-          placeholder: 'The content of the subscription',
+          placeholder: '',
+          tips: {
+            title: 'The content of the subscription',
+            content: 'Subscription content:\n\n1. Multiple single-line proxy protocols/JSON/URI\n\n2. Complete Base64/YAML',
+          },
         },
         icon: {
           label: 'Icon',
           placeholder: 'The URL of the icon',
         },
+        ignoreFailedRemoteSub: {
+          label: 'Ignore failed remote subscription(s)'
+        },
         ua: {
           label: 'User-Agent',
           placeholder:
-            'The User-Agent for downloading the original subscription',
+            'The User-Agent for downloading resource(s)',
+        },
+        subUserinfo: {
+          label: 'Subscription-Userinfo',
+          placeholder: 'Set subscription usage info manually',
+        },
+        proxy: {
+          label: 'Proxy/Policy',
+          placeholder: 'The proxy/node/policy for downloading resource(s)',
         },
       },
       commonOptions: {
@@ -242,14 +329,19 @@ export default {
           cancel: 'Cancel',
           confirm: 'Confirm',
         },
+        pasteAction: {
+          label: 'Import Data From Clipboard',
+          placeholder: 'Failed to read the clipboard automatically, please paste the data manually in this text box.'
+        },
       },
       nodeActions: {
         'Flag Operator': {
           label: 'Flags Options',
           des: 'Mode',
           options: ['Add Flag', 'Remove Flag'],
+          twOptions: ['⇒ 🇨🇳', '⇒ 🇼🇸', 'Unchanged'],
           tipsTitle: 'flags Tips',
-          tipsDes: '国旗操作说明',
+          tipsDes: '旗帜操作说明',
         },
         'Sort Operator': {
           label: 'Node Sort',
@@ -260,32 +352,37 @@ export default {
         },
         'Resolve Domain Operator': {
           label: 'Resolve Domain',
-          des: 'Providers',
+          des: 'Providers(can be controlled by the node field "_no-resolve")',
           options: ['Google', 'IP-API', 'Cloudflare', 'Ali', 'Tencent'],
+          types: ['IPv4', 'IPv6', 'IP4P'],
+          filters: ['Disabled', 'Remove Failed', 'IP Only', 'IPv4 Only', 'IPv6 Only'],
+          cache: ['Enabled', 'Disabled'],
           tipsTitle: 'domain Tips',
           tipsDes: '节点域名解析操作说明',
         },
         'Region Filter': {
           label: 'Region Filter',
-          options: ['🇭🇰 HK', '🇨🇳 TW', '🇸🇬 SG', '🇯🇵 JP', '🇬🇧 UK', '🇺🇸 US'],
+          options: ['🇭🇰 HK', '🇨🇳 TW', '🇸🇬 SG', '🇯🇵 JP', '🇬🇧 UK', '🇺🇸 US', '🇩🇪 DE', '🇰🇷 KR'],
           tipsTitle: 'Region Filter Tips',
           tipsDes: '区域过滤器操作说明',
         },
         'Type Filter': {
           label: 'Node Type Filter',
           options: [
-            'ShadowSocks',
-            'ShadowSocks R',
+            'Shadowsocks',
+            'ShadowsocksR',
             'VMess',
-            'VLess',
+            'VLESS',
             'Trojan',
-            'Http(s)',
-            'Socks5',
+            'HTTP(s)',
+            'SOCKS5',
             'Snell',
             'TUIC',
             'Hysteria',
-            'Hysteria2',
+            'Hysteria 2',
             'WireGuard',
+            'SSH',
+            'External Proxy Program',
           ],
           tipsTitle: 'Node Type Filter Tips',
           tipsDes: '节点类型过滤器操作说明',
@@ -338,19 +435,19 @@ export default {
           label: 'Script Filter',
           options: ['Link', 'Script'],
           des: ['Type', 'Content'],
-          placeholder: 'Input Script Link',
+          placeholder: 'Input Script Link or Internal File like /api/file/name. In addition to the parameters of the script itself, there is support for additional parameters: noCache - do not use cache. For example: http://a.com#a=1&b=2#noCache',
           openEditorBtn: 'Open Code Editor',
           tipsTitle: 'Script Filter Tips',
-          tipsDes: '脚本操作操作说明',
+          tipsDes: 'Use a JavaScript script to modify node information',
         },
         'Script Operator': {
           label: 'Script Operator',
           options: ['Link', 'Script'],
           des: ['Type', 'Content'],
-          placeholder: 'Input Script Link',
+          placeholder: 'Input Script Link or Internal File like /api/file/name. In addition to the parameters of the script itself, there is support for additional parameters: noCache - do not use cache. For example: http://a.com#a=1&b=2#noCache',
           openEditorBtn: 'Open Code Editor',
           tipsTitle: 'Script Operator Tips',
-          tipsDes: '脚本操作操作说明',
+          tipsDes: 'Use a JavaScript script to filter nodes',
         },
       },
     },
@@ -364,9 +461,13 @@ export default {
       githubUser: 'Please input GitHub username',
       gistToken: 'Please input Gist Token',
       defaultUserAgent: 'Please input Default User-Agent',
+      defaultTimeout: 'Please input Default Timeout (in milliseconds)',
+      cacheThreshold: 'Please input Cache Threshold (in KB)',
       noGithubUser: 'Not set GitHub username',
       noGistToken: 'Not set Gist Token',
-      noDefaultUserAgent: 'Not set default user-agent'
+      noDefaultUserAgent: 'Not set default user-agent',
+      noDefaultTimeout: 'Not set default timeout',
+      noCacheThreshold: 'Not set cache threshold',
     },
     btn: {
       download: 'Download',
@@ -400,10 +501,12 @@ export default {
     config: 'Configuration',
     storage: {
       gist: {
-        label: 'Gist'
+        label: 'Gist',
+        info: 'Sync file/subscription(s) to Gist in "Sync Page"'
       },
       manual: {
         label: 'Manual',
+        info: '',
         desc: 'To prevent accidents, backup your data before restoring.',
         backup: 'Backup',
         restore: 'Restore',
@@ -451,18 +554,18 @@ export default {
     syncSwitcher: 'Enable Sync',
     syncAllSucceed: 'Sync succeed',
     emptySub: {
-      title: "You haven' add any synced artifacts",
+      title: "You haven't add any synced artifacts",
       desc: 'You can access the artifact anywhere via Gist',
       btn: 'Add an artifact',
     },
     detail: {
-      firstLine: 'Type: {type}, Sub: {name}',
+      firstLine: 'Type: {type}, Source: {name}',
       secondLine: 'Last Time: {time}',
       notSync: 'Not sync yet',
     },
     deleteArt: {
       title: 'Delete Sync Configuration',
-      desc: 'Are you sure to delete sync configuration {displayName}? \nDeleted cannot be restored!',
+      desc: 'Are you sure to delete sync configuration {displayName}? \nDeleted cannot be restored!\n\n⚠️ If the current item has been synced before, an attempt will be made to delete gist files with the original filename and the encoded filename.',
       succeedNotify: 'Successfully deleted!',
       btn: {
         confirm: 'Delete',
@@ -494,6 +597,13 @@ export default {
         isRequired: 'Source is required',
         placeholder: 'Please select a source',
       },
+      includeUnsupportedProxy: {
+        label: 'Includes protocols not supported by the official/store version',
+        tips: {
+          title: 'Includes protocols not supported by the official/store version',
+          content: 'sing-box: +ShadowsocksR\nQuantumult X: +VLESS'
+        }
+      },
       platform: {
         label: 'Target Platform',
         isRequired: 'Target platform is required',
@@ -512,6 +622,29 @@ export default {
     selectSource: {
       title: 'Select Source',
     },
+    preview: {
+      title: 'Sub-Store Gist',
+      content: '⚠️ The status of the latest check: {status}.\nYou can update the configuration to trigger a new check.',
+      url: 'The current gist is the last one that was checked successfully.',
+      noUrl: 'Once you have successfully checked and uploaded the synchronized configuration, you can view the gist.',
+      cancel: 'Cancel',
+      confirm: 'View Gist',
+    },
+    download: {
+      content: '⚠️ This feature will only add files to the sync configuration that are not already in the sync configuration.\nYou need to manually set the source.',
+      confirm: 'Restore From Gist',
+    },
+  },
+  // 图标仓库页
+  iconCollectionPage: {
+    iconCollection: 'Icon Collection',
+    iconCollectionPlaceholder: 'Please input icon Collection url',
+    iconCollectionKey: 'Icon Collection Key',
+    iconCollectionKeyPlaceholder: 'Default Key: icons',
+    iconUrlKey: 'Icon url key',
+    iconUrlKeyPlaceholder: 'Default Key: url',
+    errorIconCollectionUrlTips: 'Please enter correct url',
+    copySuccessTips: 'The icon url has been copied',
   },
   themeSettingPage: {
     themeSettingTitle: 'Appearance',
@@ -527,7 +660,7 @@ export default {
   apiSettingPage: {
     apiSettingTitle: 'Backend Setting',
     apiSettingDesc0: `1. When the backend server address is https://api.com, an attempt is made to request https://api.com/api/utils/env to verify backend availability. When the backend server address cannot be added, try accessing this address first.`,
-    apiSettingDesc1: `2. HTTPS front-end cannot request non-local HTTP backend. Please configure a reverse proxy or host your own HTTP front-end on your LAN.`,
+    apiSettingDesc1: `2. HTTPS front-end cannot request non-local HTTP backend(Some browsers also cannot access the local HTTP backend.). Please configure a reverse proxy or host your own HTTP front-end on your LAN.`,
     apiSettingDesc2: `Add the backend server address, such as the backend service built on server/NAS/Android/cloud platform. You can refer to XiaoYi's tutorial on setting up a backend: `,
     currentApi: {
       title: 'Current Backend',
@@ -548,16 +681,40 @@ export default {
     },
   },
   moreSettingPage: {
+    subProgress: {
+      title: 'Subscription Progress Style',
+      hidden: 'Hidden',
+      background: 'Show As Background',
+    },
     moreSettingTitle: 'More Setting',
+    clearData: {
+      label: 'Clear Backend Data',
+      title: 'Clear Backend Data',
+      content: 'Are you sure?',
+      conform: 'Confirm',
+      cancel: 'Cancel',
+      succeed: 'Clear succeed',
+      failed: 'Clear failed',
+    },
+    clearFrontEndData: {
+      label: 'Clear Front-End Data',
+      title: 'Clear Front-End Data',
+      content: 'Are you sure?',
+      conform: 'Confirm',
+      cancel: 'Cancel',
+      succeed: 'Clear succeed',
+      failed: 'Clear failed',
+    },
     other: 'Other',
-    auto: 'Auto Download Gist config on startup',
-    desc: 'Note: Turning on this switch will automatically download and refresh the Gist remote configuration when SubStore is opened. The refresh operation overwrites the current configuration. To prevent data loss, you can manually upload the configuration after the modification. The switch will not be uploaded, and the configuration will be downloaded only after the restart.',
     simple: 'Simple Mode',
     islr: 'Card right swipe to call out',
-    isIC: 'Use original color for icons',
+    isIC: 'Use original color for custom icons',
+    isDefaultIcon: 'Restore default icon',
     isEditorCommon: 'Show editor common settings',
     isSimpleReicon: 'Show items refresh button',
+    showFloatingRefreshButton: 'Show floating refresh button',
     tabBar: 'Hide "Sync" Page',
+    tabBar2: 'Hide "File" Page',
     auto2: 'MoreSetting Key',
     hostapi: 'Custom Backend API',
     currentHostApi: 'Current Backend API',
@@ -576,7 +733,6 @@ export default {
       fe: 'Front-End',
       be: 'Back-End',
       module: 'Module',
-      mock: 'Mock Module',
       team: 'Project Team',
       link: 'View on Github',
     },
