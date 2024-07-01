@@ -49,11 +49,15 @@
             :label="$t(`editorPage.subConfig.basic.icon.label`)"
             prop="icon"
           >
-            <input
+            <nut-input
+              :border="false"
               class="nut-input-text"
               v-model.trim="form.icon"
               :placeholder="$t(`editorPage.subConfig.basic.icon.placeholder`)"
               type="text"
+              input-align="right"
+              left-icon="shop"
+              @click-left-icon="iconTips"
             />
           </nut-form-item>
           <nut-form-item
@@ -137,6 +141,35 @@
               class="nut-input-text"
               v-model.trim="form.ua"
               :placeholder="$t(`editorPage.subConfig.basic.ua.placeholder`)"
+              type="text"
+            />
+          </nut-form-item>
+
+          <nut-form-item
+            :label="$t(`editorPage.subConfig.basic.subInfoUrl.label`)"
+            prop="subInfoUrl"
+          >
+            <input
+              class="nut-input-text"
+              data-1p-ignore
+              v-model.trim="form.subInfoUrl"
+              :placeholder="
+                $t(`editorPage.subConfig.basic.subInfoUrl.placeholder`)
+              "
+              type="text"
+            />
+          </nut-form-item>
+          <nut-form-item
+            :label="$t(`editorPage.subConfig.basic.subInfoUserAgent.label`)"
+            prop="subInfoUserAgent"
+          >
+            <input
+              class="nut-input-text"
+              data-1p-ignore
+              v-model.trim="form.subInfoUserAgent"
+              :placeholder="
+                $t(`editorPage.subConfig.basic.subInfoUserAgent.placeholder`)
+              "
               type="text"
             />
           </nut-form-item>
@@ -307,6 +340,8 @@ watchEffect(() => {
     form.icon = sourceData.icon;
     form.source = sourceData.source || "local";
     form.url = sourceData.url;
+    form.subInfoUrl = sourceData.subInfoUrl;
+    form.subInfoUserAgent = sourceData.subInfoUserAgent;
     form.ua = sourceData.ua;
     form.mergeSources = sourceData.mergeSources;
     form.content = sourceData.content;
@@ -476,7 +511,9 @@ const submit = () => {
     Toast.hide("submits");
   });
 };
-
+const iconTips = () => {
+  router.push(`/icon/collection`);
+};
 // 名称验证器
 const nameValidator = (val: string): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -520,6 +557,9 @@ const customerBlurValidate = (prop: string) => {
 
   :deep(.nut-cell-group__warp) {
     border-radius: var(--item-card-radios);
+  }
+  :deep(.nut-icon-tips:before), :deep(.nut-icon-shop:before) {
+    cursor: pointer;
   }
 }
 

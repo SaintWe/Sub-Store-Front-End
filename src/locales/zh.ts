@@ -225,6 +225,14 @@ export default {
           label: '显示名称',
           placeholder: '输入展示的名称',
         },
+        subInfoUrl: {
+          label: '查询流量信息订阅链接',
+          placeholder: '用于传递流量信息',
+        },
+        subInfoUserAgent: {
+          label: '查询流量信息 User-Agent',
+          placeholder: '不设置则使用默认 User-Agent',
+        },
         tag: {
           label: '标签',
           placeholder: '标签(用 , 分隔) 将用于分组',
@@ -262,7 +270,7 @@ export default {
         },
         icon: {
           label: '图标链接',
-          placeholder: '填入图标链接，不要使用 jpg',
+          placeholder: '可点击左侧图标, 从图标库复制. 填入图标链接，不要使用 jpg',
         },
         ignoreFailedRemoteSub: {
           label: '忽略失败的远程订阅'
@@ -361,7 +369,7 @@ export default {
         'Resolve Domain Operator': {
           label: '域名解析',
           des: '提供商(可由节点字段 "_no-resolve" 控制)',
-          options: ['Google', 'IP-API', 'Cloudflare', 'Ali', 'Tencent'],
+          options: ['Google', 'IP-API', 'Cloudflare', 'Ali', 'Tencent', '自定义'],
           types: ['IPv4', 'IPv6', 'IP4P'],
           filters: ['不过滤', '移除失败', '只保留 IP', '只保留 IPv4', '只保留 IPv6'],
           cache: ['启用', '禁用'],
@@ -388,6 +396,7 @@ export default {
             'TUIC',
             'Hysteria',
             'Hysteria 2',
+            'Juicity',
             'WireGuard',
             'SSH',
             'External Proxy Program',
@@ -640,12 +649,23 @@ export default {
   iconCollectionPage: {
     iconCollection: '图标仓库',
     iconCollectionPlaceholder: '请输入图标仓库地址',
+    iconName: '图标名称',
+    iconNamePlaceholder: '请输入图标名称',
     iconCollectionKey: '图标仓库字段',
     iconCollectionKeyPlaceholder: '默认: icons',
     iconUrlKey: '图标地址字段',
     iconUrlKeyPlaceholder: '默认: url',
     errorIconCollectionUrlTips: '请输入正确的图标仓库地址',
     copySuccessTips: '已复制图标地址',
+    emptyCollectionTitle: '暂无图标数据',
+    emptyCollectionDesc: '请手动刷新或选择其他图标仓库',
+    refreshBtn: '手动刷新',
+    selectCollectionBtn: '切换图标仓库',
+    collectionPicker: {
+      title: '选择一个图标仓库',
+      cancel: '取消',
+      confirm: '确定',
+    },
   },
   themeSettingPage: {
     themeSettingTitle: '外观设置',
